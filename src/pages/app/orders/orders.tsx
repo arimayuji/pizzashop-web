@@ -20,6 +20,10 @@ export interface OrderProps {}
 export function Orders() {
   const [searchParams, setSearchParams] = useSearchParams()
 
+  const orderId = searchParams.get('orderId')
+  const customerName = searchParams.get('customerName')
+  const status = searchParams.get('status')
+
   function handlePaginate(pageIndex: number) {
     setSearchParams((state) => {
       state.set('page', (pageIndex + 1).toString())
@@ -33,8 +37,14 @@ export function Orders() {
     .parse(searchParams.get('page') ?? '1')
 
   const { data: result } = useQuery({
-    queryKey: ['orders', pageIndex],
-    queryFn: () => getOrders({ pageIndex }),
+    queryKey: ['orders', pageIndex, orderId, customerName, status],
+    queryFn: () =>
+      getOrders({
+        pageIndex,
+        customerName,
+        orderId,
+        status: status === 'all' ? null : status,
+      }),
   })
   return (
     <>
